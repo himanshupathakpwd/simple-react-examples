@@ -7,9 +7,10 @@ import PageCounter from './PageCounter'
 
 export default function Home() {
     const { path } = useRouteMatch()
-    const { increment } = useContext(CounterContext)
+    const { addUpdateData } = useContext(CounterContext)
+
     useEffect(() => {
-        increment(path)
+        addUpdateData(path)
     }, [])
 
     return (

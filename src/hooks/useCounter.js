@@ -1,38 +1,38 @@
 import { useState } from 'react'
 
 export function useCounter() {
-    const [counters, setCounters] = useState([
-        {
-            path: '/',
-            value: 0,
-        },
-        {
-            path: '/about',
-            value: 1,
-        },
-        {
-            path: '/users',
-            value: 2,
-        }
-    ])
-
+    const [counters, setCounters] = useState([])
+    
     function setCounter(path, value) {
-        setCounters(prevCount => prevCount.map((item, pos) => {
-            if (item.path === path) {
-                return { ...item, value };
+        setCounters(prevCounts => {
+            if (~prevCounts.findIndex(item => item.path === path)) {
+                return prevCounts.map(item => {
+                    if (item.path === path) {
+                        return { ...item, value }
+                    }
+                    return item
+                })
             }
-            return item;
-        }))
+            return [...prevCounts, { path, value }]
+        })
+    }
+
+    function addCounter(data) {
+        setCounters(prevCounts => [...prevCounts, data])
     }
 
     function getCounter(path) {
-        return counters[counters.findIndex(item => item.path === path)];
+        const counter = counters.find(item => item.path === path)
+        if (counter) {
+            return counter;
+        }
+        return { path, value: 0 }
     }
 
     function increment(path, value = 1) {
-        const { value: prevVal } = counters.find(item => item.path === path)
+        const { value: prevVal } = getCounter(path);
         setCounter(path, prevVal + value);
     }
 
-    return { counters, setCounter, getCounter, setCounters, increment }
+    return { counters, setCounter, addCounter, getCounter, setCounters, increment }
 }
